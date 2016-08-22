@@ -1,0 +1,294 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link href="./img/favicon.ico" rel="icon" type="image/x-icon">
+        <title>To Do list</title>
+        <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="./css/datepicker.css">
+        <link rel="stylesheet" type="text/css" href="./css/style.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <script src="./js/jquery.js"></script>
+    </head>
+    <style>
+        
+    </style>
+    
+    <body onload="todolist();">
+        <div id="page" class="containers" ng-controller="listContactCtrl">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="./"><img src="./img/havas-logo.png" class="img-1" alt="logo havas"></a>
+                    <a href="./"><img src="./img/havas-logo.png" class="img-2 hiddens" alt="logo havas"></a>
+                </div>
+                <!--  add -->
+                <ul class="nav nav-pills">
+                    <li class="left"><a href="javascript:void(0);" onclick="changeMenu('list-data');"><i class="fa fa-arrow-left"></i></a></li>
+                    <li class="right"><a href="javascript:void(0);" onclick="changeMenu('add-data');"><i class="fa fa-plus fa-1x"></i></a></li>
+                </ul>
+                <div class="clear"></div>
+            </div>
+            <!-- <div id="right" class="menu">
+                <i class="fa fa-bars fa-3x"></i>
+                <i class="fa fa-times fa-3x hiddens"></i>
+            </div> -->
+            
+            <!-- page add data -->
+            <div id="add-data" class="bg" style="display:none;">
+                <form id="form-data">
+                    <div class="form-group">
+                        <label>Task:</label> 
+                        <input type="text" class="text-form" id="task-text" name="Task" placeholder="write your Task here.. " /><br/>
+                    </div>
+                    <div class="form-group">
+                        <a id="date" name="Dates" class="c-btn c-datepicker-btn">
+                            <span class="material-icon">Date</span>
+                        </a>
+
+                        <div id="output"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Goals:</label> 
+                        <textarea class="text-form" id="goals-target" name="Goals" placeholder="Write Your Target..."></textarea><br/>
+                    </div>
+                    <input type="button" value="Save" onclick="saveData();" class="btn btn-success btn-small"/>
+                    <input type="reset" value="Reset" onclick="" class="btn btn-warning btn-small"/>
+                </form>
+            </div>
+            <!-- ends -->
+            <!-- this page for edit -->
+            <div id="edit-list" class="bg" style="display:none;">
+                <form id="eform-data">
+                
+                    <div class="form-group" style="display:none;">
+                        <label>id data:</label> 
+                        <input type="text" class="text-form" id="id_data" name="Task" placeholder="" /><br/>
+                    </div>
+                
+                    <div class="form-group">
+                        <label>Task:</label> 
+                        <input type="text" class="text-form" id="plan" name="Task" placeholder="Edit your Task" /><br/>
+                    </div>
+                    <div class="form-group">
+                        <label>Date:</label> 
+                        <input type="text" class="text-form" id="date-update" name="Dates" placeholder="" /><br/>
+                    </div>
+                    <div class="form-group">
+                        <label>Goals:</label> 
+                        <textarea class="text-form" id="target" name="Goals" placeholder=""></textarea><br/>
+                    </div>
+                    <input type="button" value="Update" onclick="updateData();" class="btn btn-success btn-small"/>
+                    <input type="reset" value="Reset" onclick="" class="btn btn-warning btn-small"/>
+                    <input type="button" value="Cancel" onclick="changeMenu('list-data');" class="btn btn-warning btn-small"/>
+                </form>
+            </div>
+            <!-- page no avaible -->
+            <div id="list-data" class="bg" style="display:none;">
+                no Task available...
+            </div>
+            <!-- footer -->
+            <!-- <footer class="footer">
+                
+            </footer> -->
+        </div>
+        
+    </body>
+    <script src="./js/jquery.js"></script>
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/datepicker.standalone.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        const picker = new MaterialDatePicker({})
+          .on('submit', (d) => {
+            output.innerText = d;
+
+            var c = $("#output").text();
+            console.log(" nilai nya : " + c);
+          });
+
+        const el = document.querySelector('.c-datepicker-btn');
+        el.addEventListener('click', () => {
+          picker.open();
+        }, false);
+
+        // scroll 
+
+        var scroll_pos = 0;
+        $(document).scroll(function() { 
+            scroll_pos = $(this).scrollTop();
+            if(scroll_pos > 50) {
+                $(".header-content").css('background', '#333');
+                $(".fa-arrow-left").css('color', '#fff');
+                $(".fa-plus").css('color', '#fff');
+                $(".c-datepicker__header-day").css('background', '#333');
+                $(".c-datepicker__header-date").css('background', '#333');
+                $(".img-1").removeClass('hiddens');
+                $(".img-2").addClass('hiddens');
+            } else {
+                $(".header-content").css('background', '#E61636');
+                $(".fa-arrow-left").css('color', '#333');
+                $(".fa-plus").css('color', '#333');
+                $(".c-datepicker__header-day").css('background', '#E61636');
+                $(".c-datepicker__header-date").css('background', '#E61636');
+                $(".img-2").removeClass('hiddens');
+                $(".img-1").addClass('hiddens');
+            }
+            console.log(scroll_pos);
+        });
+
+        // ends
+        function todolist(){
+
+            if (localStorage.list_data && localStorage.id_data){
+
+                list_data = JSON.parse(localStorage.getItem('list_data'));
+                
+                var data_app = "";
+                
+                if (list_data.length > 0){
+                    data_app = '';
+                    data_app = '<table class="table">';
+                    data_app += '<thead>'+
+                                        '<th>No</th>'+
+                                        '<th>All Task</th>'+
+                                        '<th>Date</th>'+
+                                        '<th>Goals</th>'+
+                                        '<th>Action</th>'+
+                                      '</thead><tbody>';
+                     var no = 1;                 
+                    for (i in list_data){
+                        data_app += '<tr>';
+                        data_app += '<td>'+ no + ' </td>'+
+                                          '<td>'+ list_data[i].Task + ' </td>'+
+                                          '<td>'+ list_data[i].Dates + ' </td>'+
+                                          '<td>'+ list_data[i].goalstarget + ' </td>'+
+                                          '<td><a class="btn btn-warning btn-small" href="javascript:void(0)" onclick="editData(\''+list_data[i].id_data+'\')">edit</a><a class="btn btn-danger btn-small" href="javascript:void(0)" onclick="deleteData(\''+list_data[i].id_data+'\')">done</a></td>';
+                        data_app += '</tr>';
+                        no++;
+                        
+                    }
+                   data_app += '</tbody></table>';
+               
+                }
+                else {
+                    data_app = "no Task available...";
+                }
+               
+                
+                $('#list-data').html(data_app);
+                $('#list-data').hide();
+                $('#list-data').fadeIn(100);
+            }
+        }
+        
+        function editData(id){
+        
+            if (localStorage.list_data && localStorage.id_data){
+                list_data = JSON.parse(localStorage.getItem('list_data'));          
+                idx_data = 0;
+                for (i in list_data){
+                    if (list_data[i].id_data == id){
+                        $("#id_data").val(list_data[i].id_data);
+                        $("#plan").val(list_data[i].Task);
+                        $("#date-update").val(list_data[i].Dates);
+                        $("#target").val(list_data[i].goalstarget);
+                        list_data.splice(idx_data, 1);
+                    }
+                    idx_data ++;
+                }
+                changeMenu('edit-list');
+                
+            }
+            
+        }
+        
+        
+        function saveData(){
+            Task = $('#task-text').val();
+            Dates = $('#output').text();
+            goalstarget = $('#goals-target').val();
+            
+            if (localStorage.list_data && localStorage.id_data){
+                list_data = JSON.parse(localStorage.getItem('list_data'));
+                id_data = parseInt(localStorage.getItem('id_data'));
+            }
+            else {
+                list_data = [];
+                id_data = 0;
+            }
+
+            id_data ++;
+            list_data.push({'id_data':id_data, 'Task':Task, 'Dates':Dates, 'goalstarget':goalstarget});
+            localStorage.setItem('list_data', JSON.stringify(list_data));
+            localStorage.setItem('id_data', id_data);
+            document.getElementById('form-data').reset();
+            changeMenu('list-data');
+            
+            return false;
+
+            
+        }
+        
+        function updateData(){
+            id_data = $('#id_data').val();
+            Task = $('#plan').val();
+            Dates = $('#date-update').val();
+            goalstarget = $('#target').val();
+            
+            list_data.push({'id_data':id_data, 'Task':Task, 'Dates':Dates, 'goalstarget':goalstarget});
+            localStorage.setItem('list_data', JSON.stringify(list_data));
+            document.getElementById('eform-data').reset();
+            changeMenu('list-data');
+            
+            return false;
+        }
+        
+        function deleteData(id){
+            if (confirm('if you have completed your work press "Ok".!! ,and if you have not completed press "Cancel".!!')) {
+    
+                if (localStorage.list_data && localStorage.id_data){
+                    list_data = JSON.parse(localStorage.getItem('list_data'));
+                    
+                    idx_data = 0;
+                    for (i in list_data){
+                        if (list_data[i].id_data == id){
+                            list_data.splice(idx_data, 1);
+                        }
+                        idx_data ++;
+
+
+                    }
+                   
+                    localStorage.setItem('list_data', JSON.stringify(list_data));
+                    // localStorage.clear('list_data', JSON.stringify(list_data));
+                    todolist();
+                }
+                console.log(confirm);
+            }
+        }
+        
+
+        function changeMenu(menu){
+            if (menu == "list-data"){
+                todolist();
+                $('#add-data').hide();
+                $('#list-data').fadeIn();
+                $('#edit-list').hide();
+            }
+            else if (menu == "add-data"){
+                $('#add-data').fadeIn();
+                $('#list-data').hide();
+                $('#edit-list').hide();
+            }else if (menu == "edit-list"){
+                $('#edit-list').fadeIn();
+                $('#add-data').hide();
+                $('#list-data').hide();
+            }
+        }
+    </script>
+</html>
